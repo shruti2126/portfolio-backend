@@ -4,22 +4,19 @@ const express = require("express");
 const nodemailer = require("nodemailer");
 const app = express();
 const cors = require("cors");
-// middleware
+
 app.use(express.json());
 app.use(express.urlencoded());
-
 app.use(cors());
 
-// Create a Nodemailer transporter with your email service credentials
 const transporter = nodemailer.createTransport({
-  service: "Gmail", // e.g., 'Gmail', 'SendGrid', etc.
+  service: "Gmail",
   auth: {
     user: "ss.sharma1826@gmail.com",
     pass: "nwcncdcpegmtvbgk",
   },
 });
 
-// Define a POST route to handle form submissions
 app.post("/send-email", (req, res) => {
   const formData = req.body;
   console.log("formData = ", formData);
@@ -45,10 +42,6 @@ app.post("/send-email", (req, res) => {
 
 app.get("/success", (req, res) => {
   res.send("<h1>Your message was successfully sent!</h1>");
-});
-
-app.get("/", (req, res) => {
-  res.json("Hello !");
 });
 
 // Start the server
