@@ -7,11 +7,6 @@ const cors = require("cors");
 require("dotenv").config();
 
 app.use(express.json());
-const corsOptions = {
-  origin: "http://localhost:3000",
-  methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
-  optionsSuccessStatus: 204,
-};
 app.use(cors(corsOptions));
 
 const transporter = nodemailer.createTransport({
@@ -35,7 +30,6 @@ app.post("/send-email", (req, res) => {
   transporter.sendMail(mailOptions, (error, info) => {
     if (error) {
       console.error(error);
-      res.setHeader("Content-Type", "application/json");
       res.setHeader("Cache-Control", "s-max-age=1, stale-while-revalidate");
       res.status(500).send("Error sending email");
     } else {
