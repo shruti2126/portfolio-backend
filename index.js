@@ -9,6 +9,8 @@ require("dotenv").config();
 app.use(express.json());
 app.use(cors());
 
+const port = process.env.PORT || 8080;
+
 const transporter = nodemailer.createTransport({
   service: "Gmail",
   auth: {
@@ -39,6 +41,10 @@ app.post("/send-email", (req, res) => {
       res.status(200).send({ "Email sent successfully": formData });
     }
   });
+});
+
+app.listen(port, () => {
+  console.log(`server running on ${port}`);
 });
 
 module.exports = app;
