@@ -41,7 +41,9 @@ app.post("/send-email", (req, res) => {
   });
 });
 
-// Start the server
-app.listen(8080, () => {
-  console.log("Server is running on port 8080");
-});
+// // Start the server
+// app.listen(8080, () => {
+//   console.log("Server is running on port 8080");
+// });
+
+module.exports = app;
