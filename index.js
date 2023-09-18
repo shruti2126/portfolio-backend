@@ -5,7 +5,6 @@ const nodemailer = require("nodemailer");
 const app = express();
 const cors = require("cors");
 require("dotenv").config();
-const port = process.env.PORT || 8080;
 
 app.use(express.json());
 app.use(cors());
@@ -40,5 +39,6 @@ app.post("/send-email", (req, res) => {
       res.status(200).send({ "Email sent successfully": formData });
     }
   });
+});
 
-  module.exports = app;
+module.exports = app;
