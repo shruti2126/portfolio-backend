@@ -40,6 +40,5 @@ app.post("/send-email", (req, res) => {
       res.status(200).send({ "Email sent successfully": formData });
     }
   });
-});
 
 module.exports = app;
