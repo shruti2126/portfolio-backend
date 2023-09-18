@@ -30,9 +30,10 @@ app.post("/send-email", (req, res) => {
   transporter.sendMail(mailOptions, (error, info) => {
     if (error) {
       console.error(error);
-      res.setHeader("Cache-Control", "s-max-age=1, stale-while-revalidate");
       res.status(500).send("Error sending email");
     } else {
+      res.header("Access-Control-Allow-Origin", "true");
+      res.setHeader("Cache-Control", "s-max-age=1, stale-while-revalidate");
       console.log("Email sent: " + info.response);
       res.status(200).send({ "Email sent successfully": formData });
     }
