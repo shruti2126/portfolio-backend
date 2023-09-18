@@ -18,6 +18,7 @@ const transporter = nodemailer.createTransport({
 });
 
 app.post("/send-email", (req, res) => {
+  console.log("inside send-email endpoint!");
   const formData = req.body;
   console.log("formData = ", formData);
   // Compose email message
