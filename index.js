@@ -23,9 +23,7 @@ const transporter = nodemailer.createTransport({
 });
 
 app.post("/send-email", (req, res) => {
-  console.log("inside send-email endpoint!");
   const formData = req.body;
-  console.log("formData = ", formData);
   // Compose email message
   const mailOptions = {
     from: `${formData.email}`,
@@ -38,12 +36,11 @@ app.post("/send-email", (req, res) => {
     if (error) {
       console.error(error);
       res.setHeader("Content-Type", "application/json");
-      res.setHeader("Access-Control-Allow-Origin", "http://localhost:3000");
       res.setHeader("Cache-Control", "s-max-age=1, stale-while-revalidate");
       res.status(500).send("Error sending email");
     } else {
       console.log("Email sent: " + info.response);
-      res.status(200).send("Email sent successfully");
+      res.status(200).send({ "Email sent successfully": formData });
     }
   });
 });
