@@ -7,7 +7,6 @@ const cors = require("cors");
 require("dotenv").config();
 
 app.use(express.json());
-app.use(express.urlencoded());
 app.use(cors());
 
 const transporter = nodemailer.createTransport({
@@ -32,6 +31,7 @@ app.post("/send-email", (req, res) => {
   transporter.sendMail(mailOptions, (error, info) => {
     if (error) {
       console.error(error);
+      res.setHeader("Cache-Control", "s-max-age=1, stale-while-revalidate");
       res.status(500).send("Error sending email");
     } else {
       res.redirect("/success");
@@ -39,10 +39,6 @@ app.post("/send-email", (req, res) => {
       res.status(200).send("Email sent successfully");
     }
   });
-});
-
-app.get("/success", (req, res) => {
-  res.send("<h1>Your message was successfully sent!</h1>");
 });
 
 // Start the server
