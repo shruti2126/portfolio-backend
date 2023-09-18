@@ -7,7 +7,7 @@ const cors = require("cors");
 require("dotenv").config();
 
 app.use(express.json());
-app.use(cors(corsOptions));
+app.use(cors());
 
 const transporter = nodemailer.createTransport({
   service: "Gmail",
