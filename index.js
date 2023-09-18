@@ -37,10 +37,11 @@ app.post("/send-email", (req, res) => {
   transporter.sendMail(mailOptions, (error, info) => {
     if (error) {
       console.error(error);
+      res.setHeader("Content-Type", "application/json");
+      res.setHeader("Access-Control-Allow-Origin", "http://localhost:3000");
       res.setHeader("Cache-Control", "s-max-age=1, stale-while-revalidate");
       res.status(500).send("Error sending email");
     } else {
-      res.redirect("/success");
       console.log("Email sent: " + info.response);
       res.status(200).send("Email sent successfully");
     }
