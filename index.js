@@ -34,7 +34,9 @@ app.post("/send-email", (req, res) => {
       console.error(error);
       res.status(500).send("Error sending email");
     } else {
-      res.header("Access-Control-Allow-Origin", "true");
+      res.header("Access-Control-Allow-Origin", "*");
+      res.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE");
+      res.header("Access-Control-Allow-Headers", "Content-Type");
       res.setHeader("Cache-Control", "s-max-age=1, stale-while-revalidate");
       res.setHeader("crossorigin", true);
       console.log("Email sent: " + info.response);

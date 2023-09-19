@@ -18,5 +18,10 @@
   },
   "engines": {
     "node": ">=14"
+  },
+  "devDependencies": {
+    "eslint": "^8.49.0",
+    "eslint-config-google": "^0.14.0",
+    "eslint-plugin-react": "^7.33.2"
   }
 }
