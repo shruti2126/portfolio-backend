@@ -4,8 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "node ./index.js",
-    "build": "echo 'No build step required'"
+    "start": "node index.js"
   },
   "author": "Shruti",
   "license": "ISC",
@@ -16,5 +15,8 @@
     "express": "^4.18.2",
     "express-json": "^1.0.0",
     "nodemailer": "^6.9.5"
+  },
+  "engines": {
+    "node": ">=14"
   }
 }
