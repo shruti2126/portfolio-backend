@@ -37,8 +37,8 @@ app.post("/send-email", (req, res) => {
       res.header("Access-Control-Allow-Origin", "http://localhost:3000");
       res.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE");
       res.header("Access-Control-Allow-Headers", "Content-Type");
+      res.header("Access-Control-Allow-Credentials", "true"); // Set this header if needed
       res.setHeader("Cache-Control", "s-max-age=1, stale-while-revalidate");
-      res.setHeader("crossorigin", true);
       console.log("Email sent: " + info.response);
       res.status(200).send({ "Email sent successfully": formData });
     }
@@ -46,7 +46,7 @@ app.post("/send-email", (req, res) => {
 });
 
 app.listen(port, () => {
-  console.log(`server running on ${port}`);
+  console.log(`Server is running on ${port}`);
 });
 
 app.get("/", (req, res) => {
