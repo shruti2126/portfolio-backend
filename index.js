@@ -59,8 +59,10 @@ app.post("/send-email", (req, res) => {
 });
 
 app.post("/addUser", async (req, res) => {
+  const email = req.query;
+  console.log("email sent = ", email);
   try {
-    const result = await insertIntoUsersQuery();
+    const result = await insertIntoUsersQuery(email);
     res.status(200).json(result);
   } catch (error) {
     res.status(500).json({ error: error.message });
