@@ -1,15 +1,16 @@
 /** @format */
-
+require("dotenv").config();
 const express = require("express");
 const nodemailer = require("nodemailer");
 const app = express();
 const cors = require("cors");
-require("dotenv").config();
+const port = process.env.PORT || 8080;
+
+const insertIntoUserResult = require("./db/queries/POST/insertIntoUsers");
+const getAllUsersResult = require("./db/queries/GET/getAllUsers");
 
 app.use(express.json());
 app.use(cors());
-
-const port = process.env.PORT || 8080;
 
 const transporter = nodemailer.createTransport({
   service: "Gmail",
@@ -34,15 +35,27 @@ app.post("/send-email", (req, res) => {
       console.error(error);
       res.status(500).send("Error sending email");
     } else {
-      res.header("Access-Control-Allow-Origin", "http://localhost:3000");
+      res.header("Access-Control-Allow-Origin", "https://shrutis.io/");
       res.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE");
       res.header("Access-Control-Allow-Headers", "Content-Type");
-      res.header("Access-Control-Allow-Credentials", "true"); // Set this header if needed
+      res.header("Access-Control-Allow-Credentials", "true");
       res.setHeader("Cache-Control", "s-max-age=1, stale-while-revalidate");
       console.log("Email sent: " + info.response);
       res.status(200).send({ "Email sent successfully": formData });
     }
   });
+});
+
+app.post("/getUsers", (req, res) => {
+  try {
+    res.status(200).json(getAllUsersResult);
+  } catch (MysqlError) {
+    res.send({ error: MysqlError.message() });
+  }
+});
+
+app.get("/addUser", (req, res) => {
+  res.status(200).json(insertIntoUserResult);
 });
 
 app.listen(port, () => {
