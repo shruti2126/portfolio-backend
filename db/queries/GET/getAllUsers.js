@@ -1,12 +1,25 @@
 /** @format */
 
-const conn = require("../../dbConn");
+const pool = require("../../dbConfig");
 
-const result = conn.query(
-  "SELECT * FROM users",
-  function (err, result, fields) {
-    if (err) throw err;
-    console.log(result);
-  }
-);
-module.exports = result;
+const executeQuery = async () => {
+  return new Promise((resolve, reject) => {
+    pool.getConnection((err, connection) => {
+      if (err) {
+        reject(err);
+        return;
+      }
+
+      connection.query("SELECT * FROM users", (error, results, fields) => {
+        connection.release();
+        if (error) {
+          reject(error);
+          return;
+        }
+        resolve(results);
+      });
+    });
+  });
+};
+
+module.exports = executeQuery;

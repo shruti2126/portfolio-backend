@@ -6,8 +6,8 @@ const app = express();
 const cors = require("cors");
 const port = process.env.PORT || 8080;
 
-const insertIntoUserResult = require("./db/queries/POST/insertIntoUsers");
-const getAllUsersResult = require("./db/queries/GET/getAllUsers");
+const insertIntoUsersQuery = require("./db/queries/POST/insertIntoUsers");
+const getAllUsersQuery = require("./db/queries/GET/getAllUsers");
 
 app.use(express.json());
 app.use(cors());
@@ -46,16 +46,22 @@ app.post("/send-email", (req, res) => {
   });
 });
 
-app.post("/getUsers", (req, res) => {
+app.post("/addUser", async (req, res) => {
   try {
-    res.status(200).json(getAllUsersResult);
-  } catch (MysqlError) {
-    res.send({ error: MysqlError.message() });
+    const result = await insertIntoUsersQuery();
+    res.status(200).json(result);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
   }
 });
 
-app.get("/addUser", (req, res) => {
-  res.status(200).json(insertIntoUserResult);
+app.get("/getUsers", async (req, res) => {
+  try {
+    const result = await getAllUsersQuery();
+    res.status(200).json(result);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
 });
 
 app.listen(port, () => {
