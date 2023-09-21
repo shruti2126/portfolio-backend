@@ -1,4 +1,5 @@
 /** @format */
+
 require("dotenv").config();
 const express = require("express");
 const nodemailer = require("nodemailer");
@@ -10,7 +11,15 @@ const insertIntoUsersQuery = require("./db/queries/POST/insertIntoUsers");
 const getAllUsersQuery = require("./db/queries/GET/getAllUsers");
 
 app.use(express.json());
-app.use(cors());
+
+app.use(
+  cors({
+    origin: ["http://localhost:3000", "https://shrutis.io"],
+    methods: "GET, POST, PUT, DELETE",
+    allowedHeaders: "Content-Type",
+    credentials: true,
+  })
+);
 
 const transporter = nodemailer.createTransport({
   service: "Gmail",
@@ -35,7 +44,10 @@ app.post("/send-email", (req, res) => {
       console.error(error);
       res.status(500).send("Error sending email");
     } else {
-      res.header("Access-Control-Allow-Origin", "https://shrutis.io/");
+      res.header("Access-Control-Allow-Origin", [
+        "http://localhost:3000",
+        "https://shrutis.io",
+      ]);
       res.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE");
       res.header("Access-Control-Allow-Headers", "Content-Type");
       res.header("Access-Control-Allow-Credentials", "true");
