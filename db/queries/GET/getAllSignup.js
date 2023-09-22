@@ -10,7 +10,7 @@ const executeQuery = async () => {
         return;
       }
 
-      connection.query("SELECT * FROM users", (error, results, fields) => {
+      connection.query("SELECT * FROM signup", (error, results, fields) => {
         connection.release();
         if (error) {
           reject(error);

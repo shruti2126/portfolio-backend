@@ -7,8 +7,8 @@ const app = express();
 const cors = require("cors");
 const port = process.env.PORT || 8080;
 
-const insertIntoUsersQuery = require("./db/queries/POST/insertIntoUsers");
-const getAllUsersQuery = require("./db/queries/GET/getAllUsers");
+const insertIntoSignupQuery = require("./db/queries/POST/insertIntoSignup");
+const getAllSignupQuery = require("./db/queries/GET/getAllSignup");
 
 app.use(express.json());
 
@@ -44,11 +44,8 @@ app.post("/send-email", (req, res) => {
       console.error(error);
       res.status(500).send("Error sending email");
     } else {
-      res.header("Access-Control-Allow-Origin", [
-        "http://localhost:3000",
-        "https://shrutis.io",
-      ]);
-      res.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE");
+      res.header("Access-Control-Allow-Origin", cors.origin);
+      res.header("Access-Control-Allow-Methods", cors.methods);
       res.header("Access-Control-Allow-Headers", "Content-Type");
       res.header("Access-Control-Allow-Credentials", "true");
       res.setHeader("Cache-Control", "s-max-age=1, stale-while-revalidate");
@@ -59,10 +56,10 @@ app.post("/send-email", (req, res) => {
 });
 
 app.post("/addUser", async (req, res) => {
-  const email = req.query;
+  const { email } = req.body;
   console.log("email sent = ", email);
   try {
-    const result = await insertIntoUsersQuery(email);
+    const result = await insertIntoSignupQuery(email);
     res.status(200).json(result);
   } catch (error) {
     res.status(500).json({ error: error.message });
@@ -71,7 +68,7 @@ app.post("/addUser", async (req, res) => {
 
 app.get("/getUsers", async (req, res) => {
   try {
-    const result = await getAllUsersQuery();
+    const result = await getAllSignupQuery();
     res.status(200).json(result);
   } catch (error) {
     res.status(500).json({ error: error.message });
