@@ -44,20 +44,19 @@ app.post("/send-email", (req, res) => {
       console.error(error);
       res.status(500).send("Error sending email");
     } else {
-      res.header("Access-Control-Allow-Origin", cors.origin);
-      res.header("Access-Control-Allow-Methods", cors.methods);
-      res.header("Access-Control-Allow-Headers", "Content-Type");
-      res.header("Access-Control-Allow-Credentials", "true");
-      res.setHeader("Cache-Control", "s-max-age=1, stale-while-revalidate");
-      console.log("Email sent: " + info.response);
-      res.status(200).send({ "Email sent successfully": formData });
+      res.header("Access-Control-Allow-Origin", [
+        "http://localhost:3000",
+        "https://shrutis.io",
+      ]);
+      res
+        .status(200)
+        .send({ "Email sent successfully": info.response, formData });
     }
   });
 });
 
 app.post("/addUser", async (req, res) => {
   const { email } = req.body;
-  console.log("email sent = ", email);
   try {
     const result = await insertIntoSignupQuery(email);
     res.status(200).json(result);
