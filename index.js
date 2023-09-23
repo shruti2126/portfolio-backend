@@ -44,10 +44,6 @@ app.post("/send-email", (req, res) => {
       console.error(error);
       res.status(500).send("Error sending email");
     } else {
-      // res.header("Access-Control-Allow-Origin", [
-      //   "http://localhost:3000",
-      //   "https://shrutis.io",
-      // ]);
       res
         .status(200)
         .send({ "Email sent successfully": info.response, formData });
