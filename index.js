@@ -14,7 +14,7 @@ app.use(express.json());
 
 app.use(
   cors({
-    origin: ["http://localhost:3000", "https://shrutis.io"],
+    origins: ["http://localhost:3000", "https://shrutis.io"],
     methods: "GET, POST, PUT, DELETE",
     allowedHeaders: "Content-Type",
     credentials: true,
