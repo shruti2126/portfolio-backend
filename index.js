@@ -3,6 +3,7 @@
 require("dotenv").config();
 const express = require("express");
 const nodemailer = require("nodemailer");
+const dns = require("dns");
 const app = express();
 const cors = require("cors");
 const port = process.env.PORT || 8080;
@@ -50,15 +51,44 @@ app.post("/send-email", (req, res) => {
     }
   });
 });
+const commonMisspellings = {
+  "gamil.com": "gmail.com",
+  "gmai.com": "gmail.com",
+  "hotamil.com": "hotmail.com",
+  "yaho.com": "yahoo.com",
+  "yahooo.com": "yahoo.com",
+  "outlok.com": "outlook.com",
+  "outloo.com": "outlook.com",
+};
 
 app.post("/addUser", async (req, res) => {
   const { email } = req.body;
-  try {
-    const result = await insertIntoSignupQuery(email);
-    res.status(200).json(result);
-  } catch (error) {
-    res.status(500).json({ error: error.message });
+  const domain = email.split("@")[1];
+
+  // Check for common misspellings
+  if (commonMisspellings[domain]) {
+    res.status(400).json({
+      error: `Did you mean ${email.split("@")[0]}@${
+        commonMisspellings[domain]
+      }?`,
+    });
+    return;
   }
+
+  dns.resolve(domain, async (err) => {
+    if (err) {
+      res.status(400).json({ error: "The domain of the email is not valid" });
+      return;
+    }
+
+    try {
+      const result = await insertIntoSignupQuery(email);
+      res.status(200).json(result);
+    } catch (error) {
+      // Assume error.message contains the appropriate error string
+      res.status(500).json({ error: error.message });
+    }
+  });
 });
 
 app.get("/getUsers", async (req, res) => {

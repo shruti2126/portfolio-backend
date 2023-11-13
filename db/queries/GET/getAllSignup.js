@@ -16,7 +16,8 @@ const executeQuery = async () => {
           reject(error);
           return;
         }
-        resolve(results);
+        console.log(resolve(results));
+        return results;
       });
     });
   });
