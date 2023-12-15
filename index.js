@@ -33,24 +33,51 @@ const transporter = nodemailer.createTransport({
 app.post("/send-email", (req, res) => {
   const formData = req.body;
   // Compose email message
-  const mailOptions = {
+  const emailToClient = {
     from: `${formData.email}`,
-    to: "ss.sharma1826@gmail.com",
+    to: "shrutis0698@gmail.com",
     subject: `New Contact Form Submission from ${formData.firstname} ${formData.lastname}`,
     text: `Name: ${formData.firstname} ${formData.lastname}\nEmail: ${formData.email}\nReason: ${formData.reason}\nMessage: ${formData.message}`,
   };
   // Send the email
-  transporter.sendMail(mailOptions, (error, info) => {
+  transporter.sendMail(emailToClient, (error, info) => {
     if (error) {
       console.error(error);
       res.status(500).send("Error sending email");
     } else {
-      res
-        .status(200)
-        .send({ "Email sent successfully": info.response, formData });
+      res.status(200).send("Email sent successfully");
+    }
+  });
+
+  //Create reply to client
+  const replyToClient = {
+    from: `shrutis0698@gmail.com`,
+    to: `${formData.email}`,
+    subject: `Responding to you request!`,
+    text: `Dear ${formData.firstname},
+    
+    I am thrilled that you are interested in connecting with me! 
+    Please respond with a suitable date time that you would like to
+    meet. 
+
+    Looking forward to it!
+
+    Best, 
+    Shruti
+  `,
+  };
+
+  //Email reply to client
+  transporter.sendMail(replyToClient, (error, info) => {
+    if (error) {
+      console.error(error);
+      res.status(500).send("Error replying to client");
+    } else {
+      res.status(200).send("Email sent to client successfully");
     }
   });
 });
+
 const commonMisspellings = {
   "gamil.com": "gmail.com",
   "gmai.com": "gmail.com",

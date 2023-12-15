@@ -1,6 +1,6 @@
 /** @format */
 
-const pool = require("../../dbConfig");
+const pool = require("../../../config/mysql/dbConfig");
 
 const executeQuery = async () => {
   return new Promise((resolve, reject) => {
