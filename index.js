@@ -54,14 +54,10 @@ app.post("/send-email", (req, res) => {
     from: `shrutis0698@gmail.com`,
     to: `${formData.email}`,
     subject: `Responding to you request!`,
-    text: `Dear ${formData.firstname},
-    
+    text: `Dear ${formData.firstname}, 
     I am thrilled that you are interested in connecting with me! 
     Please respond with a suitable date time that you would like to
-    meet. 
-
-    Looking forward to it!
-
+    meet. Looking forward to it!
     Best, 
     Shruti
   `,
