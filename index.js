@@ -128,7 +128,7 @@ app.listen(port, () => {
 });
 
 app.get("/", (req, res) => {
-  res.send("Hello! I am up and running! :))");
+  res.sendStatus(200);
 });
 
 module.exports = app;
