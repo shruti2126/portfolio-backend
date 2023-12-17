@@ -13,11 +13,19 @@ const getAllSignupQuery = require("./db/queries/GET/getAllSignup");
 
 app.use(express.json());
 
+const allowedOrigins = ["http://localhost:3000", "https://shrutis.io"];
+
 app.use(
   cors({
-    origin: ["http://localhost:3000", "https://shrutis.io"],
-    methods: "GET, POST, PUT, DELETE",
-    allowedHeaders: "Content-Type",
+    origin: (origin, callback) => {
+      if (!origin || allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        callback(new Error("Not allowed by CORS"));
+      }
+    },
+    methods: ["GET", "POST", "PUT", "DELETE"],
+    allowedHeaders: ["Content-Type"],
     credentials: true,
   })
 );
