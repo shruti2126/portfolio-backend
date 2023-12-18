@@ -16,7 +16,6 @@ This is the backend part of my personal portfolio website, handling data process
 
 - Node.js
 - Express.js
-- MongoDB
 - node-mysql2
 - nodemailer
 - AWS RDS (used for hosting mysql database)
