@@ -41,21 +41,12 @@ const transporter = nodemailer.createTransport({
 app.post("/send-email", (req, res) => {
   const formData = req.body;
   // Compose email message
-  const emailToClient = {
+  const emailToSelf = {
     from: `${formData.email}`,
     to: "shrutis0698@gmail.com",
     subject: `New Contact Form Submission from ${formData.firstname} ${formData.lastname}`,
     text: `Name: ${formData.firstname} ${formData.lastname}\nEmail: ${formData.email}\nReason: ${formData.reason}\nMessage: ${formData.message}`,
   };
-  // Send the email
-  transporter.sendMail(emailToClient, (error, info) => {
-    if (error) {
-      console.error(error);
-      res.status(500).send("Error sending email");
-    } else {
-      res.status(200).send("Email sent successfully");
-    }
-  });
 
   //Create reply to client
   const replyToClient = {
@@ -70,16 +61,36 @@ app.post("/send-email", (req, res) => {
     Shruti
   `,
   };
-
-  //Email reply to client
-  transporter.sendMail(replyToClient, (error, info) => {
-    if (error) {
-      console.error(error);
-      res.status(500).send("Error replying to client");
-    } else {
-      res.status(200).send("Email sent to client successfully");
-    }
+  // Wrap sendMail in a Promise
+  const sendEmailToClient = new Promise((resolve, reject) => {
+    transporter.sendMail(emailToSelf, (error, info) => {
+      if (error) {
+        reject(error);
+      } else {
+        resolve(info);
+      }
+    });
   });
+
+  const sendReplyToClient = new Promise((resolve, reject) => {
+    transporter.sendMail(replyToClient, (error, info) => {
+      if (error) {
+        reject(error);
+      } else {
+        resolve(info);
+      }
+    });
+  });
+
+  // Handle both emails
+  Promise.all([sendEmailToClient, sendReplyToClient])
+    .then((results) => {
+      res.status(200).send("Emails sent successfully");
+    })
+    .catch((error) => {
+      console.error(error);
+      res.status(500).send("Error sending emails");
+    });
 });
 
 const commonMisspellings = {
