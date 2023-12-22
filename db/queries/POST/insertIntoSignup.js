@@ -17,8 +17,8 @@ const executeQuery = async ({ email }) => {
     const [insertResults] = await connection.query(insertQuery, [email]);
     return insertResults;
   } catch (error) {
-    console.log(error);
-    return error;
+    console.error(error);
+    throw new Error(error.message)
   } finally {
     connection.release();
   }

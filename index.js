@@ -108,7 +108,7 @@ const dnsResolve = promisify(dns.resolve);
 
 app.post("/addUser", async (req, res) => {
   const { email } = req.body;
-  console.log("EMAIL RECEIVERD =", email);
+  console.log("received = ", email);
   const domain = email.split("@")[1];
   try {
     // Check for common misspellings
@@ -120,22 +120,21 @@ app.post("/addUser", async (req, res) => {
       });
     }
     await dnsResolve(domain);
-    const result = await insertIntoSignupQuery({ email });
-    res.status(200).json(result);
+    await insertIntoSignupQuery({ email });
+    res.sendStatus(200);
   } catch (error) {
     if (error.code === "ENOTFOUND") {
       res.status(400).json({ error: "The domain of the email is not valid" });
     } else {
-      console.error(error);
       res.status(500).json({ error: error.message });
     }
   }
 });
 
-
 app.get("/getUsers", async (req, res) => {
   try {
     const result = await getAllSignupQuery();
+    console.log("all users result = ", result);
     res.status(200).json(result);
   } catch (error) {
     res.status(500).json({ error: error.message });

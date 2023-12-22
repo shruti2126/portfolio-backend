@@ -3,24 +3,21 @@
 const pool = require("../../../config/mysql/dbConfig");
 
 const executeQuery = async () => {
-  return new Promise((resolve, reject) => {
-    pool.getConnection((err, connection) => {
-      if (err) {
-        reject(err);
-        return;
-      }
-
-      connection.query("SELECT * FROM signup", (error, results, fields) => {
-        connection.release();
-        if (error) {
-          reject(error);
-          return;
-        }
-        console.log(resolve(results));
-        return results;
-      });
-    });
-  });
+  const connection = await pool.getConnection();
+ try {
+   const query = "SELECT * FROM signup";
+   const [results] = await connection.query(query);
+   if (results.length === 0) {
+     throw new Error("No Rows in table yet.");
+   }
+   return results;
+ } catch (error) {
+    return {error}
+ } finally {
+   connection.release();
+ }
+     
+    
 };
 
 module.exports = executeQuery;
