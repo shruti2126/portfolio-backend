@@ -103,35 +103,35 @@ const commonMisspellings = {
   "outloo.com": "outlook.com",
 };
 
+const { promisify } = require("util");
+const dnsResolve = promisify(dns.resolve);
+
 app.post("/addUser", async (req, res) => {
   const { email } = req.body;
+  console.log("EMAIL RECEIVERD =", email);
   const domain = email.split("@")[1];
-
-  // Check for common misspellings
-  if (commonMisspellings[domain]) {
-    res.status(400).json({
-      error: `Did you mean ${email.split("@")[0]}@${
-        commonMisspellings[domain]
-      }?`,
-    });
-    return;
-  }
-
-  dns.resolve(domain, async (err) => {
-    if (err) {
-      res.status(400).json({ error: "The domain of the email is not valid" });
-      return;
+  try {
+    // Check for common misspellings
+    if (commonMisspellings[domain]) {
+      return res.status(400).json({
+        error: `Did you mean ${email.split("@")[0]}@${
+          commonMisspellings[domain]
+        }?`,
+      });
     }
-
-    try {
-      const result = await insertIntoSignupQuery(email);
-      res.status(200).json(result);
-    } catch (error) {
-      // Assume error.message contains the appropriate error string
+    await dnsResolve(domain);
+    const result = await insertIntoSignupQuery({ email });
+    res.status(200).json(result);
+  } catch (error) {
+    if (error.code === "ENOTFOUND") {
+      res.status(400).json({ error: "The domain of the email is not valid" });
+    } else {
+      console.error(error);
       res.status(500).json({ error: error.message });
     }
-  });
+  }
 });
+
 
 app.get("/getUsers", async (req, res) => {
   try {

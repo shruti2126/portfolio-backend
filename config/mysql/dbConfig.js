@@ -1,6 +1,8 @@
 /** @format */
+
 require("dotenv").config();
-const mysql = require("mysql2");
+const mysql = require("mysql2/promise"); // Notice the /promise here
+
 const dbInstance = process.env.RDS_INSTANCE;
 const password = process.env.RDS_PASS;
 
@@ -9,7 +11,7 @@ const pool = mysql.createPool({
   user: "Shruti",
   password: password,
   database: "blog",
-  connectionLimit: 10, // Adjust this as needed
+  connectionLimit: 10,
 });
 
 module.exports = pool;
