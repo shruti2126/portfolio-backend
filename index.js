@@ -2,151 +2,73 @@
 
 require("dotenv").config();
 const express = require("express");
-const nodemailer = require("nodemailer");
-const dns = require("dns");
+const getUsers = require("./utils/getUsers");
+const addUser = require("./utils/addUser");
+
 const app = express();
 const cors = require("cors");
 const port = process.env.PORT || 8080;
 
-const insertIntoSignupQuery = require("./db/queries/POST/insertIntoSignup");
-const getAllSignupQuery = require("./db/queries/GET/getAllSignup");
-
+const sendEmail = require("./utils/sendEmail");
+const getDoc = require("./db/queries/mongo/GET/getDoc");
+const addDoc = require("./db/queries/mongo/POST/addDoc");
 app.use(express.json());
+app.use(cors());
 
-const allowedOrigins = ["http://localhost:3000", "https://shrutis.io"];
-
-app.use(
-  cors({
-    origin: (origin, callback) => {
-      if (!origin || allowedOrigins.includes(origin)) {
-        callback(null, true);
-      } else {
-        callback(new Error("Not allowed by CORS"));
-      }
-    },
-    methods: ["GET", "POST", "PUT", "DELETE"],
-    allowedHeaders: ["Content-Type"],
-    credentials: true,
-  })
-);
-
-const transporter = nodemailer.createTransport({
-  service: "Gmail",
-  auth: {
-    user: process.env.EMAIL_USER,
-    pass: process.env.EMAIL_PASS,
-  },
+app.get("/", (req, res) => {
+  res.sendStatus(200);
 });
 
-app.post("/send-email", (req, res) => {
+/**
+ * Route for sending email (contact form and blog signup)
+ * @param {Object} req - The request object
+ * @param {Object} res - The response object
+ */
+app.post("/sendEmail", (req, res) => {
   const formData = req.body;
-  // Compose email message
-  const emailToSelf = {
-    from: `${formData.email}`,
-    to: "shrutis0698@gmail.com",
-    subject: `New Contact Form Submission from ${formData.firstname} ${formData.lastname}`,
-    text: `Name: ${formData.firstname} ${formData.lastname}\nEmail: ${formData.email}\nReason: ${formData.reason}\nMessage: ${formData.message}`,
-  };
-
-  //Create reply to client
-  const replyToClient = {
-    from: `shrutis0698@gmail.com`,
-    to: `${formData.email}`,
-    subject: `Responding to you request!`,
-    text: `Dear ${formData.firstname}, 
-    I am thrilled that you are interested in connecting with me! 
-    Please respond with a suitable date time that you would like to
-    meet. Looking forward to it!
-    Best, 
-    Shruti
-  `,
-  };
-  // Wrap sendMail in a Promise
-  const sendEmailToClient = new Promise((resolve, reject) => {
-    transporter.sendMail(emailToSelf, (error, info) => {
-      if (error) {
-        reject(error);
-      } else {
-        resolve(info);
-      }
-    });
-  });
-
-  const sendReplyToClient = new Promise((resolve, reject) => {
-    transporter.sendMail(replyToClient, (error, info) => {
-      if (error) {
-        reject(error);
-      } else {
-        resolve(info);
-      }
-    });
-  });
-
-  // Handle both emails
-  Promise.all([sendEmailToClient, sendReplyToClient])
-    .then((results) => {
-      res.status(200).send("Emails sent successfully");
-    })
-    .catch((error) => {
-      console.error(error);
-      res.status(500).send("Error sending emails");
-    });
+  sendEmail({ formData });
+  res.sendStatus(200);
 });
 
-const commonMisspellings = {
-  "gamil.com": "gmail.com",
-  "gmai.com": "gmail.com",
-  "hotamil.com": "hotmail.com",
-  "yaho.com": "yahoo.com",
-  "yahooo.com": "yahoo.com",
-  "outlok.com": "outlook.com",
-  "outloo.com": "outlook.com",
-};
+/**
+ * Route for getting all blog signups
+ * @param {Object} req - The request object (null)
+ * @param {Object} res - The response object (data in JSON format)
+ */
+app.post("/getUsers", async (req, res) => {
+  await getUsers(req, res);
+});
 
-const { promisify } = require("util");
-const dnsResolve = promisify(dns.resolve);
-
+/**
+ * Route for adding a new blog signup
+ * @param {Object} req - The request object (contact form data)
+ * @param {Object} res - The response object (message, http status code)
+ */
 app.post("/addUser", async (req, res) => {
-  const { email } = req.body;
-  console.log("received = ", email);
-  const domain = email.split("@")[1];
-  try {
-    // Check for common misspellings
-    if (commonMisspellings[domain]) {
-      return res.status(400).json({
-        error: `Did you mean ${email.split("@")[0]}@${
-          commonMisspellings[domain]
-        }?`,
-      });
-    }
-    await dnsResolve(domain);
-    await insertIntoSignupQuery({ email });
-    res.sendStatus(200);
-  } catch (error) {
-    if (error.code === "ENOTFOUND") {
-      res.status(400).json({ error: "The domain of the email is not valid" });
-    } else {
-      res.status(500).json({ error: error.message });
-    }
-  }
+  await addUser(req, res);
 });
 
-app.get("/getUsers", async (req, res) => {
-  try {
-    const result = await getAllSignupQuery();
-    console.log("all users result = ", result);
-    res.status(200).json(result);
-  } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
+/**
+ * Route for getting document from MongoDB
+ * @param {Object} req - The request object (id and collection)
+ * @param {Object} res - The response object (data/document in JSON format)
+ */
+app.get("/getDoc", async (req, res) => {
+  await getDoc(req, res);
+});
+
+/**
+ * Route to save document to MongoDB
+ * @param {Object} req - The request object (id and data)
+ * @param {Object} res - The response object (message, http status code)
+ */
+app.post("/addDoc/:collection", async (req, res) => {
+  console.log("received request body = ", req.body);
+  await addDoc(req, res);
 });
 
 app.listen(port, () => {
   console.log(`Server is running on ${port}`);
-});
-
-app.get("/", (req, res) => {
-  res.sendStatus(200);
 });
 
 module.exports = app;
