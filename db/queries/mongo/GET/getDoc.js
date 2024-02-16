@@ -23,7 +23,7 @@ module.exports = async (req, res) => {
 
     // Find the document in the specified collection using the id
     const doc = await mongo
-      .db("Portfolio-Website")
+      .db("portfolio")
       .collection(collection)
       .findOne({ _id: objectId });
 

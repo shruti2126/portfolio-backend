@@ -12,6 +12,8 @@ const port = process.env.PORT || 8080;
 const sendEmail = require("./utils/sendEmail");
 const getDoc = require("./db/queries/mongo/GET/getDoc");
 const addDoc = require("./db/queries/mongo/POST/addDoc");
+const fetchAllDocuments = require("./db/queries/mongo/GET/getAllDocs");
+
 app.use(express.json());
 app.use(cors());
 
@@ -46,6 +48,15 @@ app.post("/getUsers", async (req, res) => {
  */
 app.post("/addUser", async (req, res) => {
   await addUser(req, res);
+});
+
+/**
+ * Route for getting all documents from MongoDB
+ * @param {Object} req - The request object (collection name)
+ * @param {Object} res - The response object (data in JSON format)
+ */
+app.get("/getAllDocs/:collection", async (req, res) => {
+  await fetchAllDocuments(req, res);
 });
 
 /**
