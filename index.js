@@ -4,18 +4,14 @@ require("dotenv").config();
 const express = require("express");
 const getUsers = require("./utils/getUsers");
 const addUser = require("./utils/addUser");
+const cors = require("./config/cors/corsConfig");
+const sendEmail = require("./utils/sendEmail");
 
 const app = express();
-const cors = require("cors");
 const port = process.env.PORT || 8080;
 
-const sendEmail = require("./utils/sendEmail");
-const getDoc = require("./db/queries/mongo/GET/getDoc");
-const addDoc = require("./db/queries/mongo/POST/addDoc");
-const fetchAllDocuments = require("./db/queries/mongo/GET/getAllDocs");
-
 app.use(express.json());
-app.use(cors());
+app.use(cors);
 
 app.get("/", (req, res) => {
   res.sendStatus(200);
@@ -26,10 +22,22 @@ app.get("/", (req, res) => {
  * @param {Object} req - The request object
  * @param {Object} res - The response object
  */
-app.post("/sendEmail", (req, res) => {
-  const formData = req.body;
-  sendEmail({ formData });
-  res.sendStatus(200);
+app.post("/sendEmail", async (req, res) => {
+  console.log("here...");
+  const { formData } = req.body;
+  console.log(formData);
+
+  try {
+    const result = await sendEmail({ formData });
+    if (result === "success") {
+      res.status(200).json({ message: "Email sent successfully" });
+    } else {
+      res.status(500).send("Error sending email");
+    }
+  } catch (error) {
+    console.error(error);
+    res.status(500).send("Internal Server Error");
+  }
 });
 
 /**

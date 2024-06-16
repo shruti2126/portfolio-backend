@@ -1,6 +1,8 @@
 # .env file
 .env
 
+# node_module 
+node_modules
 # eslint config and packages
 eslintrc.json
 node_modules\@eslint
