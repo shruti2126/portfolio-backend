@@ -1,6 +1,6 @@
-const cors = require('cors');
+const cors = require("cors");
 
-const allowedOrigins = ["http://localhost:3000", "https://shrutis.io"];
+const allowedOrigins = ["http://localhost:3000", "https://www.shrucodes.com"];
 
 /**
  * Checks if the provided origin is allowed, and calls the callback accordingly.
