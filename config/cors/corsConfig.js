@@ -1,6 +1,10 @@
 const cors = require("cors");
 
-const allowedOrigins = ["https://shrucodes.com", "https://shrucodes.com/"];
+const allowedOrigins = [
+  "https://shrucodes.com",
+  "https://shrucodes.com/",
+  "https://portfolio-website-7912e.web.app/",
+];
 
 /**
  * Checks if the provided origin is allowed, and calls the callback accordingly.
