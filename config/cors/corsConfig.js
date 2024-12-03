@@ -16,6 +16,7 @@ const allowedOrigins = [
 const corsOptions = {
   origin: (origin, callback) => {
     if (!origin || allowedOrigins.includes(origin)) {
+      console.log(`Origin ${origin} is allowed`);
       callback(null, true);
     } else {
       console.error(`CORS error: origin ${origin} not allowed`);
@@ -24,7 +25,6 @@ const corsOptions = {
   },
   methods: ["GET", "POST", "PUT", "DELETE"],
   allowedHeaders: ["Content-Type"],
-  credentials: true,
 };
 
 module.exports = cors(corsOptions);

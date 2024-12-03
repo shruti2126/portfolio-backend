@@ -25,7 +25,7 @@ app.get("/", (req, res) => {
 app.post("/sendEmail", async (req, res) => {
   console.log("here...");
   const { formData } = req.body;
-  console.log(formData);
+  console.log("Form data:", formData);
 
   try {
     const result = await sendEmail({ formData });
