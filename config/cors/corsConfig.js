@@ -1,10 +1,6 @@
 const cors = require("cors");
 
-const allowedOrigins = [
-  "https://shrucodes.com",
-  "https://shrucodes.com/",
-];
-
+const allowedOrigins = ["https://shrucodes.com", "https://shrucodes.com/"];
 
 /**
  * Checks if the provided origin is allowed, and calls the callback accordingly.
@@ -18,6 +14,7 @@ const corsOptions = {
     if (!origin || allowedOrigins.includes(origin)) {
       callback(null, true);
     } else {
+      console.error(`CORS error: origin ${origin} not allowed`);
       callback(new Error("Not allowed by CORS"));
     }
   },
