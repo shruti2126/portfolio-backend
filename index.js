@@ -13,6 +13,11 @@ const port = process.env.PORT || 8080;
 app.use(express.json());
 app.use(cors);
 
+app.use((req, res, next) => {
+  console.log(`Incoming request: ${req.method} ${req.path}`);
+  next();
+});
+
 app.get("/", (req, res) => {
   res.status(200).json({ message: "Server is up and running" });
 });
