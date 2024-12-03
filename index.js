@@ -14,7 +14,7 @@ app.use(express.json());
 app.use(cors);
 
 app.get("/", (req, res) => {
-  res.sendStatus(200);
+  res.status(200).json({ message: "Server is up and running" });
 });
 
 /**
