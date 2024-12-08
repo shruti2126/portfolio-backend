@@ -54,6 +54,37 @@ app.post("/getUsers", async (req, res) => {
   await getUsers(req, res);
 });
 
+
+// Endpoint to fetch the latest resume link
+app.get("/resume", async (req, res) => {
+  try {
+    // Authenticate with service account
+    const auth = new google.auth.GoogleAuth({
+      keyFile: "./google-drive-key.json", // Path to your JSON key file
+      scopes: ["https://www.googleapis.com/auth/drive.readonly"],
+    });
+
+    const drive = google.drive({ version: "v3", auth });
+
+    // Query for the latest resume
+    const response = await drive.files.list({
+      q: "name contains 'ResumeShrutSharma'", // Adjust to match your file name
+      fields: "files(id, name, webViewLink)",
+      orderBy: "modifiedTime desc",
+      pageSize: 1,
+    });
+
+    if (response.data.files.length) {
+      const file = response.data.files[0];
+      res.json({ link: file.webViewLink }); // Return the link to the frontend
+    } else {
+      res.status(404).json({ error: "No resume found." });
+    }
+  } catch (error) {
+    console.error("Error fetching resume:", error);
+    res.status(500).json({ error: "Failed to fetch resume." });
+  }
+});
 /**
  * Route for adding a new blog signup
  * @param {Object} req - The request object (contact form data)
@@ -91,8 +122,8 @@ app.post("/addDoc/:collection", async (req, res) => {
   await addDoc(req, res);
 });
 
-app.listen(port, () => {
-  console.log(`Server is running on ${port}`);
-});
+// app.listen(port, () => {
+//   console.log(`Server is running on ${port}`);
+// });
 
 module.exports = app;
